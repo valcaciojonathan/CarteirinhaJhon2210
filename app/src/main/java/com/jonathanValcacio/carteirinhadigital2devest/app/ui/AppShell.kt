@@ -1,3 +1,4 @@
+
 package com.jonathanValcacio.carteirinhadigital2devest.app.ui
 
 import androidx.compose.foundation.Image
@@ -54,16 +55,12 @@ fun AppShell(
     onLogout: () -> Unit,
     content: @Composable (PaddingValues) -> Unit
 ) {
-
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
-    fun abrirDrawer() {
-        scope.launch { drawerState.open() }
-    }
-
     ModalNavigationDrawer(
         drawerState = drawerState,
+        gesturesEnabled = true,
         drawerContent = {
             ModalDrawerSheet {
                 Column(
@@ -105,6 +102,7 @@ fun AppShell(
 
                     Spacer(modifier = Modifier.height(24.dp))
                     HorizontalDivider()
+
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -115,17 +113,24 @@ fun AppShell(
                             text = "Tema escuro",
                             modifier = Modifier.weight(1f)
                         )
+
                         Switch(
                             checked = darkTheme,
                             onCheckedChange = onDarkThemeChange
                         )
                     }
+
                     HorizontalDivider()
                     Spacer(modifier = Modifier.weight(1f))
 
                     OutlinedButton(
                         modifier = Modifier.fillMaxWidth(),
-                        onClick = onLogout
+                        onClick = {
+                            scope.launch {
+                                drawerState.close()
+                                onLogout()
+                            }
+                        }
                     ) {
                         Text("Sair")
                     }
@@ -133,7 +138,6 @@ fun AppShell(
             }
         }
     ) {
-
         Scaffold(
             topBar = {
                 TopAppBar(
@@ -141,7 +145,6 @@ fun AppShell(
                         Text(title)
                     },
                     navigationIcon = {
-
                         if (canNavigateBack) {
                             IconButton(
                                 onClick = onNavigateBack
@@ -154,7 +157,9 @@ fun AppShell(
                         } else {
                             IconButton(
                                 onClick = {
-                                    abrirDrawer()
+                                    scope.launch {
+                                        drawerState.open()
+                                    }
                                 }
                             ) {
                                 Icon(
@@ -165,11 +170,12 @@ fun AppShell(
                         }
                     },
                     actions = {
-                        if ( canNavigateBack ) {
-
+                        if (canNavigateBack) {
                             IconButton(
                                 onClick = {
-                                    abrirDrawer()
+                                    scope.launch {
+                                        drawerState.open()
+                                    }
                                 }
                             ) {
                                 Icon(

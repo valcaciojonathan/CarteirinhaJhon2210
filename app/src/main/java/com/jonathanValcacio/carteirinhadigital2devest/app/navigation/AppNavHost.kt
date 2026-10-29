@@ -1,3 +1,4 @@
+
 package com.jonathanValcacio.carteirinhadigital2devest.app.navigation
 
 import androidx.compose.runtime.Composable
@@ -5,6 +6,7 @@ import androidx.compose.runtime.remember
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+
 import com.jonathanValcacio.carteirinhadigital2devest.app.di.AppContainer
 import com.jonathanValcacio.carteirinhadigital2devest.app.navigation.aluno.alunoNavGraph
 import com.jonathanValcacio.carteirinhadigital2devest.app.navigation.auth.authNavGraph
@@ -20,16 +22,14 @@ fun AppNavHost(
     onDarkThemeChange: (Boolean) -> Unit,
     container: AppContainer
 ) {
-
     val sessionFactory = remember(container.sessionTokenStore) {
         SessionViewModelFactory(
             sessionTokenStore = container.sessionTokenStore
         )
     }
 
-    val sessionViewModel: SessionViewModel = viewModel(
-        factory = sessionFactory
-    )
+    val sessionViewModel: SessionViewModel =
+        viewModel(factory = sessionFactory)
 
     fun graphFor(perfil: PerfilAcesso): String {
         return when (perfil) {
@@ -42,7 +42,6 @@ fun AppNavHost(
         currentGraph: String,
         destinationGraph: String
     ) {
-
         navController.navigate(destinationGraph) {
             popUpTo(currentGraph) {
                 inclusive = true
@@ -59,6 +58,7 @@ fun AppNavHost(
             loginRepository = container.loginRepository,
             onLoginSucesso = { usuario ->
                 sessionViewModel.setUsuarioLogado(usuario)
+
                 replaceGraph(
                     currentGraph = GraphRoutes.AUTH,
                     destinationGraph = graphFor(usuario.perfil)
@@ -72,19 +72,23 @@ fun AppNavHost(
             unidadeCurricularRepository = container.unidadeCurricularRepository,
             darkTheme = darkTheme,
             onDarkThemeChange = onDarkThemeChange,
+
             onLogout = {
                 sessionViewModel.limparSessao()
+
                 replaceGraph(
                     currentGraph = GraphRoutes.ALUNO,
                     destinationGraph = GraphRoutes.AUTH
                 )
             },
+
             onSessaoAusente = {
                 replaceGraph(
                     currentGraph = GraphRoutes.ALUNO,
                     destinationGraph = GraphRoutes.AUTH
                 )
             },
+
             onPerfilInvalido = { perfil ->
                 replaceGraph(
                     currentGraph = GraphRoutes.ALUNO,
@@ -97,22 +101,27 @@ fun AppNavHost(
             navController = navController,
             usuarioLogadoFlow = sessionViewModel.usuarioLogado,
             turmaProfessorRepository = container.turmaProfessorRepository,
-            unidadeCurricularProfessorRepository = container.unidadeCurricularProfessorRepository,
+            unidadeCurricularProfessorRepository =
+                container.unidadeCurricularProfessorRepository,
             darkTheme = darkTheme,
             onDarkThemeChange = onDarkThemeChange,
+
             onLogout = {
                 sessionViewModel.limparSessao()
+
                 replaceGraph(
                     currentGraph = GraphRoutes.PROFESSOR,
                     destinationGraph = GraphRoutes.AUTH
                 )
             },
+
             onSessaoAusente = {
                 replaceGraph(
                     currentGraph = GraphRoutes.PROFESSOR,
                     destinationGraph = GraphRoutes.AUTH
                 )
             },
+
             onPerfilInvalido = { perfil ->
                 replaceGraph(
                     currentGraph = GraphRoutes.PROFESSOR,
